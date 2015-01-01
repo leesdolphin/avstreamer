@@ -1,10 +1,16 @@
 language: python
 python:
-  - "2.7"
+    - "2.7"
 
 # - "3.4"
 
 # command to install dependencies
-install: "pip install -r build-requirements.txt"
+install:
+    - pip install -r build-requirements.txt --use-mirrors
+    - pip install coveralls --use-mirrors
 
-script: "python setup.py build test"
+script:
+    coverage run --source=moscowdjango,meetup manage.py test
+
+after_success:
+    coveralls
