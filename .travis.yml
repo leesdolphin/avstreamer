@@ -6,11 +6,11 @@ python:
 
 # command to install dependencies
 install:
-    - pip install -r build-requirements.txt --use-mirrors
-    - pip install coveralls --use-mirrors
+    - pip install -r build-requirements.txt
+    - pip install coveralls
 
 script:
-    coverage run --source=moscowdjango,meetup manage.py test
+    coverage run --source=avstreamer setup.py test
 
 after_success:
     coveralls
