@@ -146,13 +146,25 @@ class TestMetadataHeader(ut.TestCase):
         self.header.start_time = 0
 
 
+    def test_default_header(self):
+        self.header = md.MetadataHeader()
+        self.init_header()
+
+        header_str = self.header.create_header()
+
+        self.assertEqual("\x00" * 0x40, header_str[0x40:0x80])
+
+
+    def test_invalid_version_fails(self):
+        self.init_header()
+        self.header.version = 100
+        with self.assertRaises(TypeError, msg="An unkown version is still writable?"):
+            self.header.create_header()
+
     def test_invalid_information(self):
-        self.assertEqual(-1, self.header.version)
         self.assertEqual(-1, self.header.type)
         self.assertEqual(-1, self.header.hash)
         self.assertEqual(-1, self.header.start_time)
-        with self.assertRaises(TypeError, msg="An unkown version is still writable?"):
-            self.header.create_header()
 
         self.header.version = 0
         with self.assertRaises(struct.error, msg="Type -> -1 is valid"):
@@ -209,3 +221,55 @@ class TestMetadataHeader(ut.TestCase):
         self.assertEqual("\x00" * 0x10, header_str[0x10:0x20])
 
         self.assertEqual(TEST_TYPE_HEADER, header_str[0x40:0x80])
+
+
+
+class TestMJPEGVideoMetadataHeader(ut.TestCase):
+
+    def setUp(self):
+        self.header = md.MJPEGVideoMetadataHeader()
+        self.header.hash = 0
+        self.header.start_time = 0
+
+
+    def test_correct_type_and_version_used(self):
+        self.assertEqual(self.header.version, 0x00)
+        self.assertEqual(self.header.type, 0x00)
+        self.assertEqual(self.header.type_version, 0x00)
+
+
+    def test_invalid_information_not_output(self):
+        self.assertEqual(-1, self.header.horizontal_size)
+        self.assertEqual(-1, self.header.vertical_size)
+        self.assertEqual(-1, self.header.frame_rate)
+
+        with self.assertRaises(struct.error, msg="Horizontal Size -> -1 is valid"):
+            self.header.create_type_header()
+
+        self.header.horizontal_size = 0
+        with self.assertRaises(struct.error, msg="Vertical Size -> -1 is valid"):
+            self.header.create_type_header()
+
+        self.header.vertical_size = 0
+        with self.assertRaises(struct.error, msg="Start Time -> -1 is valid"):
+            self.header.create_type_header()
+
+        self.header.frame_rate = 0
+
+        self.header.create_type_header()
+
+    def test_type_header_conforms(self):
+        self.header.horizontal_size = hs = 1024
+        self.header.vertical_size = vs = 2048
+        self.header.frame_rate = fr = 444
+        header_str = self.header.create_type_header()
+
+        # Version
+        self.assertEqual("\x00", header_str[0])
+
+        # Reserved
+        self.assertEqual("\x00", header_str[1])
+        self.assertEqual(struct.pack(">H", hs), header_str[2:4])
+        self.assertEqual(struct.pack(">H", vs), header_str[4:6])
+        self.assertEqual(struct.pack(">H", fr), header_str[6:8])
+        self.assertEqual("\x00" * 56, header_str[8:])

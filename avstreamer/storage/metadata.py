@@ -23,8 +23,8 @@ HASH_ALGORITHMS = {
 
 
 
-def loadMetadata(file):
-    pass
+# def loadMetadata(file):
+#     pass
 
 
 class MetadataFileWriter(object):
@@ -75,7 +75,7 @@ class MetadataHeader(object):
     file_header_struct = struct.Struct("> B B B 5x Q 16x 32s")
 
     def __init__(self):
-        self.version = -1
+        self.version = 0
         self.type = -1
         self.hash = -1
         self.start_time = -1
@@ -97,3 +97,26 @@ class MetadataHeader(object):
     def create_type_header(self):
         # All Zeros by default.
         return "\x00" * 64
+
+
+
+class MJPEGVideoMetadataHeader(MetadataHeader):
+
+    TYPE = 0x00
+    type_header_struct = struct.Struct(">B 1x H H H 56x")
+
+    def __init__(self):
+        super(MJPEGVideoMetadataHeader, self).__init__()
+        self.version = 0
+        self.type = MJPEGVideoMetadataHeader.TYPE
+        self.type_version = 0
+        self.horizontal_size = -1
+        self.vertical_size = -1
+        self.frame_rate = -1
+
+    def create_type_header(self):
+        if self.type_version != 0:
+            raise TypeError("Unrecognised version 0x%X" % (self.version, ))
+
+        return self.type_header_struct.pack(self.type_version, self.horizontal_size,
+                                            self.vertical_size, self.frame_rate)
