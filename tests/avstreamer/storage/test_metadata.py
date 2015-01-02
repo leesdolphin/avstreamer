@@ -1,8 +1,9 @@
 import unittest as ut
-import avstreamer.storage.metadata as md
 import StringIO as sio
 import hashlib
 import struct
+
+import avstreamer.storage.metadata as md
 
 
 TEST_TYPE_HEADER = "".join([chr(idx) for idx in xrange(0,64)])
