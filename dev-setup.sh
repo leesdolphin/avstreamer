@@ -3,7 +3,7 @@
 PYTHON_VERSION=2.7
 if [[ "X$1" != "X" ]]; then
   PYTHON_VERSION=$1
-fi  
+fi
 
 
 OLDPWD=$(pwd)
@@ -55,14 +55,8 @@ if [[ $VIRUTAL_ENV != $DIR* ]]; then
     source $VENV_DIR/bin/activate >/dev/null 2>&1
 fi
 
-REQUIREMENT_FILES=("build-requirements.txt" "dev-requirements.txt")
 
-for REQ_FILE in "${REQUIREMENT_FILES[@]}"
-do
-    while read REQ; do
-        install $REQ
-    done < $REQ_FILE
-done
+pip install --upgrade -r dev-requirements.txt
 
 # Return to old directory.
 cd $OLDPWD
