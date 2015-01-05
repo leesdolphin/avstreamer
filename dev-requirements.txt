@@ -2,3 +2,5 @@
 Sphinx==1.2.3
 sphinx-rtd-theme==0.1.6
 pylint==1.4.0
+# The following should probably be replaced with something better.
+-e git://github.com/CoreSecurity/pcapy.git@0.10.8#egg=pcapy-master
