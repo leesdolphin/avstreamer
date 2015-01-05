@@ -5,7 +5,13 @@ python:
 # - "3.4"
 
 # command to install dependencies
+before_install:
+	  - sudo apt-get update -qq
+	  - sudo apt-get install -qq libpcap-dev
+    - sudo apt-get install -qq python-pcapy
+    - python -c "import pcapy" # Test the package is avaliable
 install:
+    - apt-get
     - pip install -r build-requirements.txt
     - pip install coveralls
 
