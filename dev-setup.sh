@@ -47,7 +47,7 @@ if [[ $VIRUTAL_ENV != $DIR* ]]; then
 
     if [ ! -d "$VENV_DIR" ]; then
         # Create a new environment.
-        virtualenv -p `which python$PYTHON_VERSION` $VENV_DIR
+        virtualenv --system-site-packages -p `which python$PYTHON_VERSION` $VENV_DIR
         # And configure it to use python 2.7
     fi
 
@@ -57,6 +57,17 @@ fi
 
 
 pip install -q --upgrade -r dev-requirements.txt
+
+python -c "import pcapy" > /dev/null 2>&1
+
+if [[ $? -eq 1 ]]; then
+  if [[ `which apt-get` ]]; then
+    sudo apt-get install -q python-pcapy
+  else
+    echo "Please install pcapy some other way."
+    # pip install -q -e git://github.com/CoreSecurity/pcapy.git@0.10.8#egg=pcapy-master
+  fi
+fi
 
 # Return to old directory.
 cd $OLDPWD
