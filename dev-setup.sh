@@ -56,7 +56,7 @@ if [[ $VIRUTAL_ENV != $DIR* ]]; then
 fi
 
 
-pip install --upgrade -r dev-requirements.txt
+pip install -q --upgrade -r dev-requirements.txt
 
 # Return to old directory.
 cd $OLDPWD
