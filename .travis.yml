@@ -1,6 +1,7 @@
 language: python
 python:
     - "2.7"
+    - "pypy"
 
 # - "3.4"
 
@@ -14,7 +15,6 @@ before_install:
     - sudo apt-get install -qq -y python-pcapy
     - python -c "import pcapy" # Test the package is avaliable
 install:
-    - apt-get
     - pip install -q -r build-requirements.txt
     - pip install -q coveralls
 
